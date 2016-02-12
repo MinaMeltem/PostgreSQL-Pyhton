@@ -1,0 +1,19 @@
+
+ import csv
+ import psycopg2
+ 
+ with open('C:\Users\Me\Desktop\data.csv') as f:
+ reader = csv.reader(f)
+ rows = [row for row in reader]
+ conn = psycopg2.connect( "dbname='DBname' user='user_name' host='host_name' password='password'")
+ 
+ for row in rows:
+ name = row[0] # first column in csv
+ phone = row[1] # second column in csv
+ cur = conn.cursor()
+ cur.execute('SELECT tb_names FROM customers WHERE phone = %s', (phone,)) #selecting column from you table 
+ row = cur.fetchone()
+ cur.execute('SELECT tb_phones FROM customers WHERE name = %s', (name,))
+ row = cur.fetchone()
+ cur.execute("INSERT INTO messages (tb_names, tb_phones) VALUES (%s, %s) ", (name, phone)) #inserting from csv to database
+ conn.commit()
